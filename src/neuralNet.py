@@ -1,32 +1,42 @@
-import numpy as np
+# import numpy as np
+# import math
+# import copy
+# import matplotlib.pyplot as plt
+# import time
+
+
 class neuralNet():
-    def __init__(self, d, dh, m, n, eta=3e-4, regularize=None, fixed=False):
+
+
+    def __init__(self, d, hidden_dims, m, n, eta=3e-4, regularize=None, fixed=False):
+        import numpy as np
+
         self.inputDim = d #inputDim
-        self.hiddenDim = dh
+        self.hiddenDim = hidden_dims # a tuple of hidden units
         self.outputDim = m #outputDim
         self.regularize = regularize # lambda value
         self.learningRate = eta
         self.numData = n
         self.batchErrorGradients = []
         #may use xavier init - maybe explore this later.
-
         # Initial weights and biases
         if fixed:
             self.W_1 = w1_fixed
             self.W_2 = w2_fixed
             self.W_3 = w3_fixed
-
-
-
         else:
-            self.W_1 = np.random.uniform(-1/np.sqrt(d), 1/np.sqrt(d), dh*d).reshape(dh, d)
+            import numpy as np
+            self.W_1 = np.random.uniform(-1/np.sqrt(d), 1/np.sqrt(d),
+                                         self.hiddenDim[0]*d).reshape(self.hiddenDim[0], d)
+            self.W_2 = np.random.uniform(-1/np.sqrt(self.hiddenDim[0]), 1/np.sqrt(self.hiddenDim[0]),
+                                         self.hiddenDim[1]*self.hiddenDim[0]).reshape(self.hiddenDim[1],
+                                                                                      self.hiddenDim[0])
+            self.W_3 = np.random.uniform(-1/np.sqrt(self.hiddenDim[1]), 1/np.sqrt(self.hiddenDim[1]),
+                                         self.hiddenDim[1]*m).reshape(m, self.hiddenDim[1])
 
-            self.W_2 = np.random.uniform(-1/np.sqrt(dh), 1/np.sqrt(dh), dh*dh).reshape(dh, dh)
-            self.W_3 = np.random.uniform(-1/np.sqrt(dh), 1/np.sqrt(dh), dh*m).reshape(m, dh)
 
-
-        self.b_1 = np.zeros(dh).reshape(dh,)
-        self.b_2 = np.zeros(dh).reshape(dh,)
+        self.b_1 = np.zeros(self.hiddenDim[0]).reshape(self.hiddenDim[0],)
+        self.b_2 = np.zeros(self.hiddenDim[1]).reshape(self.hiddenDim[1],)
         self.b_3 = np.zeros(m).reshape(m,)
 
 
@@ -100,6 +110,18 @@ class neuralNet():
             negLog = np.mean(negLog)
 
         return negLog
+
+    def classErr(self, target, predicted):
+        '''
+        not class dependent
+        target must NOT be in one hot
+        '''
+        cnt = 0
+
+        for i in range(target.shape[0]):
+            if target[i] != predicted [i]:
+                cnt +=1
+        return float(cnt) / target.shape[0]
 
     def bpropLoop(self, batchData, batchTarget):
         '''

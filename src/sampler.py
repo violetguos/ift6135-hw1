@@ -2,8 +2,9 @@ class BatchSampler(object):
     '''
     randomly sample batches without replacement.
     '''
-    import numpy as np
     def __init__(self, data, targets, batch_size):
+        import numpy as np
+
         self.num_points = data.shape[0]
         self.features = data.shape[1]
         self.data = data
@@ -15,6 +16,7 @@ class BatchSampler(object):
         '''
         Get a random batch without replacement
         '''
+        import numpy as np
 
         if not K:
             indices = np.random.choice(self.indices, self.batch_size, replace=False)

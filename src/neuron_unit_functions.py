@@ -1,19 +1,5 @@
 import numpy as np
-def classErr(target, predicted):
-    '''
-    not class dependent
-    target must NOT be in one hot
-    '''
-    cnt = 0
-    #print("in class Err")
-    #print("target \n", target.shape[0])
-    #print("predicted \n", predicted.shape[0])
-    #print("target range \n", np.max(target))
-    #print("predicted range \n", np.max(predicted))
-    for i in range(target.shape[0]):
-        if target[i] != predicted [i]:
-            cnt +=1
-    return float(cnt) / target.shape[0]
+
 
 # Our own activation functions
 
