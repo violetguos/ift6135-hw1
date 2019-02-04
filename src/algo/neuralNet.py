@@ -1,15 +1,22 @@
-# import numpy as np
-# import math
-# import copy
-# import matplotlib.pyplot as plt
-# import time
+import numpy as np
+from src.algo.neuron_unit_functions import *
+from src.algo.initWeight import *
+w1_fixed = np.array([[-0.39751495, 0.00628629],
+                     [-0.0205684, 0.26683984],
+                     [0.59675625, 0.13841242],
+                     [-0.25439437, 0.17629986],
+                     [0.49765604, 0.6328421]])
+w2_fixed = np.array([[-0.41283729, 0.30420197, -0.26925985, 0.1972228, -0.23960543],
+                     [-0.07794628, 0.05534963, 0.39403587, 0.02447081, -0.20876543],
+                     [0.12031748, -0.15724041, 0.07004474, 0.01330072, 0.37325964],
+                     [-0.13685212, 0.2450681, -0.1039663, -0.43493921, 0.18092754],
+                     [-0.29733443, 0.39217373, 0.21700504, -0.20839457, 0.08478064],
+                     [-0.05650999, -0.21730141, -0.20041823, -0.03229149, 0.41680238]])
+w3_fixed = np.array([[0.18862318, -0.26977775, 0.10358298, 0.04400272, 0.30614878, -0.00911728],
+                     [0.17972289, 0.19698613, 0.22084821, -0.07767053, -0.32146514, -0.19307932]])
 
-
-class neuralNet():
-
-
-    def __init__(self, d, hidden_dims, m, n, eta=3e-4, regularize=None, fixed=False):
-        import numpy as np
+class NeuralNet():
+    def __init__(self, d, hidden_dims, m, n, init_mode='uniform', eta=3e-4, regularize=None, fixed=False):
 
         self.inputDim = d #inputDim
         self.hiddenDim = hidden_dims # a tuple of hidden units
@@ -20,19 +27,30 @@ class neuralNet():
         self.batchErrorGradients = []
         #may use xavier init - maybe explore this later.
         # Initial weights and biases
+        import numpy as np
         if fixed:
             self.W_1 = w1_fixed
             self.W_2 = w2_fixed
             self.W_3 = w3_fixed
-        else:
-            import numpy as np
-            self.W_1 = np.random.uniform(-1/np.sqrt(d), 1/np.sqrt(d),
-                                         self.hiddenDim[0]*d).reshape(self.hiddenDim[0], d)
-            self.W_2 = np.random.uniform(-1/np.sqrt(self.hiddenDim[0]), 1/np.sqrt(self.hiddenDim[0]),
-                                         self.hiddenDim[1]*self.hiddenDim[0]).reshape(self.hiddenDim[1],
-                                                                                      self.hiddenDim[0])
-            self.W_3 = np.random.uniform(-1/np.sqrt(self.hiddenDim[1]), 1/np.sqrt(self.hiddenDim[1]),
-                                         self.hiddenDim[1]*m).reshape(m, self.hiddenDim[1])
+        elif init_mode == 'old':
+            # from last year
+            self.W_1 = np.random.uniform(-1 / np.sqrt(d), 1 / np.sqrt(d),
+                                         self.hiddenDim[0] * d).reshape(self.hiddenDim[0], d)
+            self.W_2 = np.random.uniform(-1 / np.sqrt(self.hiddenDim[0]), 1 / np.sqrt(self.hiddenDim[0]),
+                                         self.hiddenDim[1] * self.hiddenDim[0]).reshape(self.hiddenDim[1],
+                                                                                        self.hiddenDim[0])
+            self.W_3 = np.random.uniform(-1 / np.sqrt(self.hiddenDim[1]), 1 / np.sqrt(self.hiddenDim[1]),
+                                         self.hiddenDim[1] * m).reshape(m, self.hiddenDim[1])
+
+        elif init_mode == 'normal':
+            self.W_1, self.W_2, self.W_3 = normal_init(self.inputDim, self.hiddenDim[0],
+                                                       self.hiddenDim[1], self.outputDim)
+        elif init_mode == 'glorot':
+            self.W_1, self.W_2, self.W_3 = glorot_init(self.inputDim, self.hiddenDim[0],
+                                                       self.hiddenDim[1], self.outputDim)
+        elif init_mode == 'zero':
+            self.W_1, self.W_2, self.W_3 = zero_init(self.inputDim, self.hiddenDim[0],
+                                                     self.hiddenDim[1], self.outputDim)
 
 
         self.b_1 = np.zeros(self.hiddenDim[0]).reshape(self.hiddenDim[0],)
@@ -226,7 +244,6 @@ class neuralNet():
             self.W_2 -= (self.regularize[2] * np.sign(self.W_2) + 2 * self.regularize[3] * self.W_2) * self.learningRate
             self.W_3 -= (self.regularize[4] * np.sign(self.W_3) + 2 * self.regularize[5] * self.W_3) * self.learningRate
 
-
         self.W_1 -= self.grad_W1 * self.learningRate
         self.W_2 -= self.grad_W2 * self.learningRate
         self.W_3 -= self.grad_W3 * self.learningRate
@@ -235,8 +252,13 @@ class neuralNet():
         self.b_2 -= self.grad_b2 * self.learningRate
         self.b_3 -= self.grad_b3 * self.learningRate
 
-
-
+    def calculParam(self):
+        """
+        calculates the total amount of parameters
+        """
+        return (self.inputDim * self.hiddenDim[0] + self.hiddenDim[1] * self.hiddenDim[0]
+                + self.outputDim * self.hiddenDim[1] + self.inputDim + self.hiddenDim[0]
+                + self.hiddenDim[1] + self.outputDim)
 
     def gradDescentLoop(self, batchData, batchTarget, K):
         # Call each example in the data (over the minibatches) in a loop

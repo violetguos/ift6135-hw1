@@ -1,3 +1,14 @@
+# for our assignment
+*.pkl.gz
+*.pkl.npy
+*.gz
+/data/
+data/
+datasets/
+.idea/
+hw1attempt/
+download.py
+
 #########Latex############
 ## Core latex/pdflatex auxiliary files:
 *.aux
