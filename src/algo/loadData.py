@@ -1,5 +1,8 @@
+import math
+import numpy as np
+
+
 class loadData:
-    import numpy as np
     def __init__(self):
         self.addOnes = False
         self.data_path = '/data/'

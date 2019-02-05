@@ -1,0 +1,7 @@
+save_directory=output/q1
+batch_size=2
+epochs=10
+h1=50
+h2=50
+learning_rate=0.002
+init_method=old

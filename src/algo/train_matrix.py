@@ -21,7 +21,7 @@ def train_matrix(nn, data, target, K, num_epoch, save_directory, fixed=False, va
             nn.gradDescentMat(batchData, batchTarget.T)
 
             nn.updateParams()
-        if n % 10 == 0:
+        if True: #n % 10 == 0:
             print(':)')
             nn.fprop(batchData, mode = 'matrix')
             pred = np.argmax(nn.o_s, axis = 0)

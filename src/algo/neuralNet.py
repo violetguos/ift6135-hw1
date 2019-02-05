@@ -98,7 +98,7 @@ class NeuralNet():
 
         # softmax of weights
         if batchData.shape[0] == 1:
-            print('using single softmax')
+            # print('using single softmax')
             self.o_s = softmax_single(self.o_a)
         else:
             self.o_s = softmax_multiple(self.o_a)
@@ -190,7 +190,7 @@ class NeuralNet():
 
         self.grad_W3 = np.matmul(self.grad_oa, self.h_s2.T)/batchData.shape[0] #!
         self.grad_b3 = np.sum(self.grad_oa, axis=1)/batchData.shape[0] #!
-        self.grad_hs2 = np.matmul(self.W_3.T , self.grad_oa)
+        self.grad_hs2 = np.matmul(self.W_3.T, self.grad_oa)
         self.grad_ha2 = np.multiply(self.grad_hs2, np.where(self.h_a2 > 0, 1.0, 0.0))
 
 
