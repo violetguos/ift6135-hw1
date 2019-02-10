@@ -66,25 +66,11 @@ def main(argv):
     run(args)
 
 
-def argparser():
-    """
-    Configure the command-line arguments parser
-
-    :return: the arguments parsed
-    """
-    parser = argparse.ArgumentParser()
-    parser.add_argument('config', type=str)
-
-    return parser.parse_args()
-
+def get_params():
+    """read from q1_param_to_run"""
 
 
 if __name__ == '__main__':
-    #for i in range(50):
-    # main(sys.argv[1:])
+    # just use a list or json for now instead of config argparser
+    main(sys.argv[1:])
 
-    args = argparser()
-    conf = configparser.ConfigParser()
-    conf.read(args.config)
-    print(args)
-    print(conf.get('DEFAULT','save_directory'))
