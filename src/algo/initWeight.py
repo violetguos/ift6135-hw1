@@ -2,9 +2,9 @@ import numpy as np
 
 
 def zero_init(d, dh1, dh2, m):
-    W_1 = np.zeros((dh1*d), ())
-    W_2 = np.zeros((dh2*dh1))
-    W_3 = np.zeros((dh2*m))
+    W_1 = np.zeros((dh1*d)).reshape((dh1, d))
+    W_2 = np.zeros((dh2*dh1)).reshape((dh2, dh1))
+    W_3 = np.zeros((dh2*m)).reshape( (m, dh2))
     return W_1, W_2, W_3
 
 def glorot_init(d, dh1, dh2, m):

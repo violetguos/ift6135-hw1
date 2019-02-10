@@ -42,8 +42,9 @@ class ParamGenerator():
         """
         :return: the epsilon that we perturb, index into the  [0] to make it an int
         """
-        i_arr = np.arange(0, 5)
-        k_arr = np.arange(1,5)
+        i_arr = np.arange(0, 6)
+        print(i_arr)
+        k_arr = np.arange(1, 6)
         i = np.random.choice(i_arr, 1)
         k = np.random.choice(k_arr, 1)
         epsilon = k * (10 ** i)

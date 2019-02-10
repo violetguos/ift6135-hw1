@@ -1,6 +1,8 @@
 import numpy as np
 from src.algo.neuron_unit_functions import *
 from src.algo.initWeight import *
+import pickle
+
 w1_fixed = np.array([[-0.39751495, 0.00628629],
                      [-0.0205684, 0.26683984],
                      [0.59675625, 0.13841242],
@@ -32,6 +34,7 @@ class NeuralNet():
             self.W_1 = w1_fixed
             self.W_2 = w2_fixed
             self.W_3 = w3_fixed
+
         elif init_mode == 'old':
             # from last year
             self.W_1 = np.random.uniform(-1 / np.sqrt(d), 1 / np.sqrt(d),
@@ -66,19 +69,12 @@ class NeuralNet():
         # hidden layer 1
 
         if mode == 'matrix':
-            #print('self.b1', self.b_1.shape)
-            #print('self.W_1', self.W_1.shape)
-            #print('batchData.T', batchData.T.shape)
             stack_b1 = np.array([self.b_1,] * self.numData).T
-            #print('stack_b1', stack_b1.shape)
             self.h_a1 = np.dot(self.W_1, batchData.T) + stack_b1
         elif mode == 'loop':
             self.h_a1 = np.dot(self.W_1, batchData.T) + self.b_1
 
-
         self.h_s1 = relu(self.h_a1)
-
-
 
         # hidden layer 2
         if mode == 'matrix':
@@ -97,15 +93,16 @@ class NeuralNet():
             self.o_a = np.dot(self.W_3, self.h_s2) + self.b_3
 
         # softmax of weights
-        if batchData.shape[0] == 1:
-            # print('using single softmax')
+        if mode=='loop': #batchData.shape[0] == 1:
             self.o_s = softmax_single(self.o_a)
-        else:
+        elif mode =='matrix':
             self.o_s = softmax_multiple(self.o_a)
+
 
         # make predication
         if mode == 'loop':
             self.prediction = np.argmax(self.o_s,axis = 0)
+
         elif mode == 'matrix':
             self.prediction = np.argmax(self.o_s,axis = 0)
 
@@ -118,6 +115,8 @@ class NeuralNet():
 
         if mode == 'loop':
             negLog = -self.o_a[np.argmax(y)] + np.log(np.sum(np.exp(self.o_a), axis=0))
+
+
 
         elif mode == 'matrix':
             negLog = []
@@ -161,24 +160,41 @@ class NeuralNet():
         grad_b1: dh x n
         '''
 
+
+        # print('self_os', self.o_s)
         self.grad_oa = self.o_s - batchTarget
+        #print("batch target", batchTarget)
+        #print('grad_oa', self.grad_oa)
+
         # hidden layer 3
         self.grad_W3 = np.outer(self.grad_oa, self.h_s2.T)
+        #print("self.grad_W3", self.grad_W3)
         self.grad_b3 = self.grad_oa
-        self.grad_hs2 = np.dot(self.W_3.T , self.grad_oa)
+        #print("self.grad_b3", self.grad_b3)
+
+        self.grad_hs2 = np.dot(self.W_3.T, self.grad_oa)
+        # print('self.grad_hs2', self.grad_hs2)
         h_a_stack2 = np.where(self.h_a2 > 0, 1, 0)
         self.grad_ha2 = np.multiply(self.grad_hs2, h_a_stack2)
+        #print('self.grad_ha2', self.grad_ha2)
 
         # hidden layer 2
         self.grad_W2 = np.outer(self.grad_ha2, self.h_s1.T)
+        #print('self.grad_w2', self.grad_W2)
         self.grad_b2 = self.grad_ha2
+        #print('self.grad_b2', self.grad_b2)
+
         self.grad_hs1 = np.dot(self.W_2.T , self.grad_ha2)
+        #print('self.grad_hs1', self.grad_hs1)
         h_a_stack1 = np.where(self.h_a1 > 0, 1, 0)
         self.grad_ha1 = np.multiply(self.grad_hs1, h_a_stack1)
+        #print('self.grad_ha1', self.grad_ha1)
 
         # hidden layer 1
         self.grad_W1 = np.outer(self.grad_ha1, batchData)
+        #print('self.grad_W1', self.grad_W1)
         self.grad_b1 = self.grad_ha1
+        #print('self.grad_b1', self.grad_b1)
 
 
     def bprop_matrix(self, batchData, batchTarget):
@@ -307,3 +323,8 @@ class NeuralNet():
         # Feed the entire data matrix in as input
         self.fprop(batchData)
         self.bprop_matrix(batchData, batchTarget)
+
+    def save_model(self, fpath):
+        # assume fpath is a full path and the file name
+        with open(fpath, 'wb') as jar:
+            pickle.dump(fpath, jar)

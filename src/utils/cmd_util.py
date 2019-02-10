@@ -3,7 +3,7 @@ from time import gmtime, strftime
 
 
 def file_name_gen(str):
-    return strftime("%Y_%m_%d_%H_%M_%S", gmtime()) + str
+    return strftime("%Y_%m_%d_%H_%M_%S_", gmtime()) + str
 
 def save_args(args):
     # Save argparse arguments to a file for reference

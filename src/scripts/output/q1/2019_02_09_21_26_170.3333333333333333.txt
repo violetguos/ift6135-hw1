@@ -1,0 +1,10 @@
+nan
+nan
+-inf
+nan
+nan
+nan
+-inf
+nan
+-inf
+-inf
