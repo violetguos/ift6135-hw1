@@ -1,20 +1,18 @@
-from src.utils import mnist_reader
 import numpy as np
-# Print full array for now
-#np.set_printoptions(threshold=np.inf)
+import argparse
+import sys
+import copy
+import glob
+import re
+import matplotlib.pyplot as plt
 
 from src.algo.neuralNet import NeuralNet
 from src.algo.train_matrix import train_matrix
 from src.algo.hyperparam_gen import ParamGenerator
-import argparse
+from src.utils import mnist_reader
 from src.utils.cmd_util import save_args
 from src.algo.loadData import loadData
-import sys
-import copy
-from src.utils.cmd_util import *
-import glob
-import re
-import matplotlib.pyplot as plt
+from src.utils.cmd_util import file_name_gen, save_args, save_errors
 
 
 def convertTarget(targetValues):
@@ -38,11 +36,7 @@ def data_import():
 
     return X_train, y_train, X_valid, y_valid, X_test, y_test
 
-
-
-
 def oneDiff(nn, x_i, y_i, sigma, outer_i):
-
     # outer_i of 10 elements to perturb
     grad_W2 = nn.grad_W2
 
@@ -162,14 +156,11 @@ def main(argv):
     # Output directory
     parser.add_argument('--save_directory', type=str, default='output/q1_3/', help='output directory')
 
-
     # Configuration
     parser.add_argument('--batch_size', type=int, default=1, metavar='N', help='batch size')
     parser.add_argument('--epochs', type=int, default=10, metavar='N', help='number of epochs')
-
     parser.add_argument("--h1", type=int, default=50, help='hidden layer 1')
     parser.add_argument('--h2', type=int, default=50, help='hidden layer 2')
-
     parser.add_argument('--learning_rate', type=float, default=2e-3, help="eta learning rate")
     parser.add_argument('--init_method', type=str, default='glorot', help='normal, zero, glorot')
     args = parser.parse_args(argv)

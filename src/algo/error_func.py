@@ -15,30 +15,33 @@ def classErr(target, predicted):
     return float(cnt) / target.shape[0]
 
 
-def show_error(save_directory, nn, epoch, train, valid, test):
+def show_error(save_directory, nn, epoch, train, valid=None, test=None, return_err=False):
     '''
-    calculattes error in matrix mode
+    calculates error in matrix mode. 
     '''
     # Train
     nn.numData = train[0].shape[0]
-
     nn.fprop(train[0], mode='matrix')
     training_loss = nn.errorRate(train[1].T, mode='matrix')
-    training_err = classErr(np.argmax(train[1], axis = 1), nn.prediction)
+    training_err = classErr(np.argmax(train[1], axis=1), nn.prediction)
 
     # Valid
-    nn.numData = valid[0].shape[0]
-    nn.fprop(valid[0], mode='matrix')
-
-    valid_loss = nn.errorRate(valid[1].T, mode='matrix')
-    valid_err = classErr(np.argmax(valid[1], axis  =1 ), nn.prediction)
+    if valid:
+        nn.numData = valid[0].shape[0]
+        nn.fprop(valid[0], mode='matrix')
+        valid_loss = nn.errorRate(valid[1].T, mode='matrix')
+        valid_err = classErr(np.argmax(valid[1], axis=1), nn.prediction)
+    else:
+        valid_loss, valid_err = -1, -1
 
     # Test
-    nn.numData = test[0].shape[0]
-
-    nn.fprop(test[0], mode='matrix')
-    test_loss = nn.errorRate(test[1].T, mode='matrix')
-    test_err = classErr(np.argmax(test[1], axis = 1), nn.prediction)
+    if test:
+        nn.numData = test[0].shape[0]
+        nn.fprop(test[0], mode='matrix')
+        test_loss = nn.errorRate(test[1].T, mode='matrix')
+        test_err = classErr(np.argmax(test[1], axis=1), nn.prediction)
+    else:
+        test_loss, test_err = -1, -1
 
     # Write to log file
     # old
@@ -47,6 +50,11 @@ def show_error(save_directory, nn, epoch, train, valid, test):
     #                                          valid_loss, valid_err, test_loss, test_err)
     #     fp.write(line)
 
-
     cmd_util.save_errors(save_directory, epoch, training_loss, training_err,
                          valid_loss, valid_err, test_loss, test_err)
+
+    if return_err:
+        # For now, only returns train and validation error. (Adapt for test later if needed.)
+        return [training_loss, training_err, valid_loss, valid_err]
+    else:
+        return None

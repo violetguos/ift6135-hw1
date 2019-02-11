@@ -1,8 +1,9 @@
-import math
 import numpy as np
 
+from src.utils import mnist_reader
 
-class loadData:
+
+class LoadData:
     def __init__(self):
         self.addOnes = False
         self.data_path = '/data/'
@@ -12,21 +13,19 @@ class loadData:
         numClasses = np.max(targetValues) + 1
         return np.eye(numClasses)[targetValues]
 
-    def loadNumData(self, data, target):
+    def data_import(self):
         # Split into train/validation/test
-        np.random.seed(6390)
-        randIndices = np.random.permutation(data.shape[0])
-        data, target = data[randIndices], target[randIndices]
+        X_train, y_train = mnist_reader.load_mnist('../../data/mnist', kind='train')
+        X_test, y_test = mnist_reader.load_mnist('../../data/mnist', kind='t10k')
+        X_valid = X_test[0:5000]
+        y_valid = y_test[0:5000]
+        X_test = X_test[5000:10000]
+        y_test = y_test[5000:10000]
+        print(y_test.shape)
 
-        div1 = int(math.floor(0.8 * data.shape[0]))
-        div2 = int(math.floor(0.9 * data.shape[0]))
-        trainData, trainTarget = data[:div1], target[:div1]
-        validData, validTarget = data[div1:div2], target[div1:div2]
-        testData, testTarget = data[div2:], target[div2:]
+        # Get one-hot encoding
+        y_valid = self.convertTarget(y_valid)
+        y_test = self.convertTarget(y_test)
+        y_train = self.convertTarget(y_train)
 
-        # Get one hot encoding
-        trainTarget = self.convertTarget(trainTarget)
-        validTarget = self.convertTarget(validTarget)
-        testTarget = self.convertTarget(testTarget)
-
-        return trainData, trainTarget, validData, validTarget, testData, testTarget
+        return X_train, y_train, X_valid, y_valid, X_test, y_test

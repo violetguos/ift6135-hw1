@@ -1,76 +1,68 @@
-from src.utils import mnist_reader
-import numpy as np
+import argparse
+import sys
+
 from src.algo.neuralNet import NeuralNet
 from src.algo.hyperparam_gen import ParamGenerator
+from src.algo.loadData import LoadData
 from src.algo.train_matrix import train_matrix
-import argparse
-from src.utils.cmd_util import save_args
-import sys
-from src.utils.cmd_util import *
-import configparser
 
 
-def convertTarget(targetValues):
-    # Convert to one-hot encoding
-    numClasses = np.max(targetValues) + 1
-    return np.eye(numClasses)[targetValues]
+def run_hyperparams(train_data, train_target, valid_data, valid_target,
+                    h1=1024, h2=512, learning_rate=2e-3, init_method='glorot'):
+    # Instantiate neural network
+    nn = NeuralNet(train_data.shape[1], (h1, h2), 10, train_data.shape[0],
+                   init_mode=init_method, eta=learning_rate)
+    print('Neural network instantiated.')
+    print('Total number of parameters: {}'.format(nn.calculParam()))
 
-def data_import():
-    X_train, y_train = mnist_reader.load_mnist('../../data/mnist', kind='train')
-    X_test, y_test = mnist_reader.load_mnist('../../data/mnist', kind='t10k')
-    X_valid = X_test[0:5000]
-    y_valid = y_test[0:5000]
-    X_test = X_test[5000:10000]
-    y_test = y_test[5000:10000]
-    print(y_test.shape)
+    # Train and validate neural network
+    errors = train_matrix(nn, train_data, train_target, valid=[valid_data, valid_target], return_err=True)
 
-    # convert the targets to one hot
-    y_valid = convertTarget(y_valid)
-    y_test = convertTarget(y_test)
-    y_train = convertTarget(y_train)
-
-    return X_train, y_train, X_valid, y_valid, X_test, y_test
+    # Since we are tuning on validation accuracy, just return that
+    _, _, _, valid_err = errors[3]
+    return valid_err
 
 
 def run(args):
-    save_args(args)  # save command line to a file for reference
-    train_data, train_target, valid_data, valid_target, test_data, test_target = data_import()
-    nn = NeuralNet(train_data.shape[1], (args.h1, args.h2), 10, train_data.shape[0],
-                          init_mode=args.init_method)
-    print("total number of param in plot_test", nn.calculParam())
+    '''
+    The idea here is to do hyperparameter tuning by random search.
+    The hyperparameter generator will return random hyperparameter configs, which we will run
+    until a config is found that surpasses 97% validation accuracy.
+    '''
+    # save_args(args)  # save command line to a file for reference
 
+    # Load data
+    dataloader = LoadData()
+    train_data, train_target, valid_data, valid_target, test_data, test_target = dataloader.data_import()
 
+    param_generator = ParamGenerator()
+    valid_acc = 0.0
+    while valid_acc < 0.97:
+        hiddens = param_generator.hiddenUnit()
+        h1, h2 = hiddens[0], hiddens[1]
+        learning_rate = param_generator.learningRate()
+        valid_err = run_hyperparams(train_data, train_target, valid_data, valid_target,
+                                    h1=h1, h2=h2, learning_rate=learning_rate)
+        valid_acc = 1 - valid_err   # To get accuracy out of 100%
+    print('Configuration surpassing 97% validation accuracy found!')
+    print('valid_acc:', valid_acc)
+    print('h1: {}, h2: {}, learning_rate: {}'.format(h1, h2, learning_rate))
 
-    # def train_matrix(nn, data, target, K, num_epoch, save_directory, fixed=False, valid=None, test=None):
-    train_matrix(nn, train_data, train_target)
 
 def main(argv):
+    # Parse input arguments
     parser = argparse.ArgumentParser(description='MLP with numpy MNIST aim for dat 97')
-    # Output directory
     parser.add_argument('--save_directory', type=str, default='output/q1_dat_97/', help='output directory')
-
-
-    # generate the hyper params
-
-
-    # Configuration
     parser.add_argument('--batch_size', type=int, default=64, metavar='N', help='batch size')
     parser.add_argument('--epochs', type=int, default=60, metavar='N', help='number of epochs')
-
     parser.add_argument("--h1", type=int, default=1024, help='hidden layer 1')
     parser.add_argument('--h2', type=int, default=512, help='hidden layer 2')
-
     parser.add_argument('--learning_rate', type=float, default=2e-3, help="eta learning rate")
     parser.add_argument('--init_method', type=str, default='glorot', help='normal, zero, glorot')
     args = parser.parse_args(argv)
     run(args)
 
 
-def get_params():
-    """read from q1_param_to_run"""
-
-
 if __name__ == '__main__':
     # just use a list or json for now instead of config argparser
     main(sys.argv[1:])
-
