@@ -1,0 +1,7 @@
+h1=558
+h2=733
+learning_rate=0.02375626938699569
+save_directory=output/q1_dat_97/
+batch_size=32
+epochs=50
+init_method=glorot

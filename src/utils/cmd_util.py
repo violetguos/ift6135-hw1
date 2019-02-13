@@ -14,12 +14,18 @@ def save_args(args):
             f.write("{}={}\n".format(k, v))
 
 
-def save_errors(save_directory, epoch, training_loss, training_err, valid_loss, valid_err, test_loss, test_err):
-    # Save argparse arguments to a file for reference
-    os.makedirs(save_directory, exist_ok=True)
-    fname = file_name_gen('train.txt')
+def save_errors(save_directory, epoch, training_loss, training_err, valid_loss, valid_err): #, test_loss, test_err):
 
-    with open(os.path.join(save_directory, fname), 'w') as f:
-        line = '{},{},{},{},{},{},{}\n'.format(epoch, training_loss, training_err,
-                                             valid_loss, valid_err, test_loss, test_err)
+    #fname = file_name_gen('train.txt')
+
+    # with open(save_directory, 'a+') as f:
+    #     line = '{},{},{},{},{},{},{}\n'.format(epoch, training_loss, training_err,
+    #                                          valid_loss, valid_err, test_loss, test_err)
+    #     f.write(line)
+
+
+
+    with open(save_directory, 'a+') as f:
+        line = '{},{},{},{},{}\n'.format(epoch, training_loss, training_err,
+                                             valid_loss, valid_err)
         f.write(line)

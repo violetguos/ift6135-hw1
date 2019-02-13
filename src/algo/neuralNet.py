@@ -327,4 +327,4 @@ class NeuralNet():
     def save_model(self, fpath):
         # assume fpath is a full path and the file name
         with open(fpath, 'wb') as jar:
-            pickle.dump(fpath, jar)
+            pickle.dump(self, jar)

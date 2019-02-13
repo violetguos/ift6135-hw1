@@ -88,35 +88,50 @@ def run(args):
     x_i = train_data[0:1]
     y_i = train_target[0:1].T
 
-    nn.gradDescentLoop(x_i, y_i, 1)
-    param_gen = ParamGenerator(10) # seed not really used
-    N = param_gen.finite_diff_epsilon()
-    sigma = 1/N
+    diff_dict = {}
+    for i in range(20):
 
-    estimate_arr = []
-    for i in range(0, 10):
-        print(type(i))
-        r = oneDiff(nn, x_i, y_i, sigma, i)
-        estimate_arr.append(r)
+        nn.gradDescentLoop(x_i, y_i, 1)
+        param_gen = ParamGenerator(10) # seed not really used
+        N = param_gen.finite_diff_epsilon()
+        sigma = 1/N
 
-    estimate_arr = np.array(estimate_arr)
-    fname = file_name_gen("_q1_finit_grad_N_" + str(N))
-    np.savetxt(args.save_directory +fname+'.txt', estimate_arr)
-    grad_10 = nn.grad_W2[0][0:10]
-    np.savetxt(args.save_directory +fname+'_real_grad.txt',grad_10)
+        estimate_arr = []
+        for i in range(0, 10):
+            print(type(i))
+            r = oneDiff(nn, x_i, y_i, sigma, i)
+            estimate_arr.append(r)
 
-    # find the maximum gradient diff
-    diff = abs(grad_10-grad_10)
+        estimate_arr = np.array(estimate_arr).flatten()
 
-    print(diff)
-    np.savetxt(args.save_directory +fname+'_diff_grad.txt',grad_10)
+        print("estimate_arr")
+        print(estimate_arr)
+        fname = file_name_gen("_q1_finit_grad_N_" + str(N))
+        np.savetxt(args.save_directory +fname+'.txt', estimate_arr)
+        grad_10 = nn.grad_W2[0][0:10]
+        np.savetxt(args.save_directory +fname+'_real_grad.txt',grad_10)
+
+        # find the maximum gradient diff
+        diff = np.abs(estimate_arr-grad_10)
+
+        print("*************")
+        print(grad_10)
+
+
+        diff_max = np.max(diff)
+
+        diff_dict[N] = diff_max
+
+    print("diff_dict")
+    print(diff_dict)
+    #np.savetxt(args.save_directory +fname+'_diff_grad.txt',grad_10)
 
 
 def plot_diff(args):
     print(os.getcwd())
     max_diff = []
     n_val_arr = []
-    for file in glob.glob(args.save_directory+'*diff_grad.txt'):
+    for file in glob.glob(args.save_directory+'newTrial*_diff_grad.txt'):
         # get the numpy array
         grad_diff = np.loadtxt(file)
         print(np.max(grad_diff))
@@ -129,22 +144,34 @@ def plot_diff(args):
         n_val_arr.append(n_val)
 
     #return max_diff, n_val_arr
-    np.savetxt("max_diff.txt", max_diff)
-    np.savetxt("n_val_arr.txt", n_val_arr)
+    np.savetxt("new_max_diff.txt", max_diff)
+    np.savetxt("new_n_val_arr.txt", n_val_arr)
 
 
 def plot_final():
 
-    max_diff = np.loadtxt("max_diff.txt")
-    n_val_arr = np.loadtxt("n_val_arr.txt")
+    # max_diff = np.loadtxt("new_max_diff.txt")
+    # n_val_arr = np.loadtxt("new_n_val_arr.txt")
+    #
+    # #n_val_arr = 1/ n_val_arr
+    # n_val_idx = np.argsort(n_val_arr)
+    # print(n_val_idx)
+    # max_diff = max_diff[n_val_idx]
+    # print(max_diff)
 
-    n_val = np.sort(n_val_arr)
+    diff_dict = {20: 0.0, 100000: 0.0, 5: 0.7576155999830192, 40: 0.0, 1: 6.387484313413516, 10000: 0.0, 30000: 0.0, 50: 0.0, 3: 3.536721505027195, 3000: 0.0, 5000: 0.0, 1000: 0.0, 400000: 0.0, 500000: 0.0, 200: 0.0, 300: 0.0}
+    lists = sorted(diff_dict.items())  # sorted by key, return a list of tuples
+
+    x, y = zip(*lists)  # unpack a list of pairs into two tuples
+
+
+
     fname = 'Q1_3 N vs gradient diff'
     plt.title(fname)
-    #plt.xscale('log')
+    plt.xscale('log')
     #plt.yscale('log')
-    plt.scatter(n_val, max_diff)
-    plt.legend()
+    plt.plot(x, y)
+    #plt.legend()
 
 
     plt.savefig(fname + ".png")
@@ -174,14 +201,20 @@ def main(argv):
     parser.add_argument('--init_method', type=str, default='glorot', help='normal, zero, glorot')
     args = parser.parse_args(argv)
 
+    # uncomment to retrain
+    # run(args)
+    # plot_diff(args)
 
-    #run(args)
-    #plot_diff(args)
-
-    #plot_final()
+    plot_final()
 
 
 if __name__ == '__main__':
-    #for i in range(50):
-    main(sys.argv[1:])
 
+    # uncomment to retrain
+
+    # for i in range(50):
+    # main(sys.argv[1:])
+
+    diff_dict = {20: 0.0, 100000: 0.0, 5: 0.7576155999830192, 40: 0.0, 1: 6.387484313413516, 10000: 0.0, 30000: 0.0, 50: 0.0, 3: 3.536721505027195, 3000: 0.0, 5000: 0.0, 1000: 0.0, 400000: 0.0, 500000: 0.0, 200: 0.0, 300: 0.0}
+    lists = sorted(diff_dict.items())  # sorted by key, return a list of tuples
+    print(lists)

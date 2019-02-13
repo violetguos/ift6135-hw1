@@ -24,14 +24,19 @@ def read_params(parser):
     parameters = vars(parser.parse_args())
     return parameters
 
-def get_parameters(title=None):
+def get_parameters(data, title=None):
 
-    with open("args.json") as data_file:
-        data = json.load(data_file)
+    #data = load_json(data_path)
     parser = setup_parser(data, title)
     parameters = read_params(parser)
 
     return parameters
+
+
+def load_json(data_path):
+    with open(data_path, "r") as fp:
+        json_dict = json.load(fp)
+    return json_dict
 
 if __name__ == "__main__":
     params = get_parameters()

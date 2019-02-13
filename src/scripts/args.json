@@ -1,0 +1,38 @@
+{
+    "hyperparam": [
+        {
+            "h1": {
+                "type": "int",
+                "help": "hidden",
+                "default": 558
+            },
+            "h2": {
+                "type": "int",
+                "help": "hidden",
+                "default": 733
+            },
+            "learning_rate": {
+                "type": "float",
+                "help": "eta learning rate",
+                "default": 0.002375626938699569
+            }
+        },
+        {
+            "h1": {
+                "type": "int",
+                "help": "hidden",
+                "default": 1777
+            },
+            "h2": {
+                "type": "int",
+                "help": "hidden",
+                "default": 342
+            },
+            "learning_rate": {
+                "type": "float",
+                "help": "eta learning rate",
+                "default": 0.001330407936170204
+            }
+        }
+    ]
+}

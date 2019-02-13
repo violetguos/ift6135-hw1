@@ -1,41 +1,45 @@
 from src.algo.error_func import show_error, classErr
 from src.algo.sampler import BatchSampler
 import numpy as np
-from src.utils.cmd_util import *
+from src.utils.cmd_util import save_errors, file_name_gen
 import os
 
 
-def train_matrix(nn, data, target, K, num_epoch, save_directory, fixed=False, valid=None, test=None):
+def train_matrix(nn, data, target, K, num_epoch, args, valid=None, test=None):
     # Get minibatch
     batchSampler = BatchSampler(data, target, K)
     numBatch = data.shape[0] // K
 
-    save_freq = int(num_epoch/10)
+    save_freq = int(num_epoch/5)
+
+    # fixed name for each run for logging errors
+    fname_prefix = file_name_gen('NN_model_h1_{}_h2_{}_{}'.format(nn.hiddenDim[0], nn.hiddenDim[1], args.init_method))
+    fname_errs = fname_prefix + '.txt'
+
 
     print("number of batch in train matrix", numBatch)
     for n in range(num_epoch):
         for i in range(numBatch):
             # Do descent and update params - this is one epoch
-
-            if fixed:
-                batchData, batchTarget = batchSampler.get_batch(K)
-            elif not fixed:
-                batchData, batchTarget = batchSampler.get_batch()
+            batchData, batchTarget = batchSampler.get_batch()
             nn.numData = K
             nn.gradDescentMat(batchData, batchTarget.T)
-
             nn.updateParams()
-        if n % save_freq == 0 or n == (num_epoch - 1):
+            # print("***************")
+            # print(nn.W_3)
+            # print(nn.W_2)
+            # print(nn.W_1)
+            # print()
+
+        if n == (num_epoch - 1) or n % save_freq == 0:
             print(':) saving')
-            nn.fprop(batchData, mode = 'matrix')
-            pred = np.argmax(nn.o_s, axis = 0)
-            print("Cross-entropy loss at the end of epoch {}: {}".format(n, nn.errorRate(batchTarget.T, mode = 'matrix')))
-            print("classification error at the end of epoch {}: {}".format(n,
-                                                    classErr(np.argmax(batchTarget, axis = 1), pred)))
-            fname = file_name_gen('NN_model_h1_{}_h2_{}_epoch_{}.pkl'.format(nn.hiddenDim[0], nn.hiddenDim[1], n))
-            fp = os.path.join(save_directory,fname)
+            fname = fname_prefix + '_epoch_{}.pkl'.format(n)
+            fp = os.path.join(args.save_directory, fname)
             nn.save_model(fp)
         if valid:
             nn.numData = valid[0].shape[0]
-            show_error(save_directory, nn, n, [data, target], valid, test)
+
+        fp = os.path.join(args.save_directory, fname_errs)
+
+        show_error(fp, nn, n, [data, target], valid)
     print("End of train matrix process.")

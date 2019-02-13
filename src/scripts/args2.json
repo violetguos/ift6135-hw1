@@ -1,0 +1,89 @@
+{
+    "hyperparam": [
+        {
+            "h1": {
+                "type": "int",
+                "help": "hidden",
+                "default": 1461
+            },
+            "h2": {
+                "type": "int",
+                "help": "hidden",
+                "default": 398
+            },
+            "learning_rate": {
+                "type": "float",
+                "help": "eta learning rate",
+                "default": 0.0028410694564885027
+            }
+        },
+        {
+            "h1": {
+                "type": "int",
+                "help": "hidden",
+                "default": 459
+            },
+            "h2": {
+                "type": "int",
+                "help": "hidden",
+                "default": 738
+            },
+            "learning_rate": {
+                "type": "float",
+                "help": "eta learning rate",
+                "default": 0.0021225751494063673
+            }
+        },
+        {
+            "h1": {
+                "type": "int",
+                "help": "hidden",
+                "default": 689
+            },
+            "h2": {
+                "type": "int",
+                "help": "hidden",
+                "default": 300
+            },
+            "learning_rate": {
+                "type": "float",
+                "help": "eta learning rate",
+                "default": 0.0009752683084926336
+            }
+        },
+        {
+            "h1": {
+                "type": "int",
+                "help": "hidden",
+                "default": 306
+            },
+            "h2": {
+                "type": "int",
+                "help": "hidden",
+                "default": 906
+            },
+            "learning_rate": {
+                "type": "float",
+                "help": "eta learning rate",
+                "default": 0.00585986835415015
+            }
+        },
+        {
+            "h1": {
+                "type": "int",
+                "help": "hidden",
+                "default": 327
+            },
+            "h2": {
+                "type": "int",
+                "help": "hidden",
+                "default": 1524
+            },
+            "learning_rate": {
+                "type": "float",
+                "help": "eta learning rate",
+                "default": 0.0015338297436779398
+            }
+        }
+    ]
+}
