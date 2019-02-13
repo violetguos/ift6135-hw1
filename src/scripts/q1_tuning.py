@@ -65,7 +65,7 @@ def main(argv):
     #
     #     args = parser.parse_args(argv)
     #     run(args)
-
+    
     plot_learning_curves('src/scripts/output/q1_dat_97/2019_02_12_23_09_17_NN_model_h1_1461_h2_398_glorot_97_dat1.txt')
 
 

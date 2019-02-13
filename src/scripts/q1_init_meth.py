@@ -207,6 +207,13 @@ def main(argv):
 
     plot_final()
 
+    print("Finite gradient difference with different N")
+    diff_dict = {20: 0.0, 100000: 0.0, 5: 0.7576155999830192, 40: 0.0, 1: 6.387484313413516, 10000: 0.0, 30000: 0.0,
+                 50: 0.0, 3: 3.536721505027195, 3000: 0.0, 5000: 0.0, 1000: 0.0, 400000: 0.0, 500000: 0.0, 200: 0.0,
+                 300: 0.0}
+    lists = sorted(diff_dict.items())  # sorted by key, return a list of tuples
+    print(lists)
+
 
 if __name__ == '__main__':
 
