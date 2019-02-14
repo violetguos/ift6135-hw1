@@ -13,9 +13,9 @@ class ParamGenerator():
     def countParam(self, hiddenDim):
         inputDim = 784
         outputDim = 10
-        return (inputDim * hiddenDim[0] + hiddenDim[1] * hiddenDim[0]
-                + outputDim * hiddenDim[1] + inputDim + hiddenDim[0]
+        return (inputDim * hiddenDim[0] + hiddenDim[1] * hiddenDim[0] + outputDim * hiddenDim[1] + inputDim + hiddenDim[0]
                 + hiddenDim[1] + outputDim)
+
 
     def hiddenUnit(self):
         """
@@ -27,7 +27,9 @@ class ParamGenerator():
             h1 = np.random.randint(100, 2000)
             h2 = np.random.randint(100, 2000)
             total_param = self.countParam([h1, h2])
-            constraint = (0.5 * 10e5) < self.countParam((h1, h2)) and (10e5) > self.countParam((h1, h2))
+            print("total param", total_param)
+            constraint = (0.5 * 10e5) < total_param and (10e5) > total_param
+        print(h1, h2)
         return (h1, h2)
 
     def learningRate(self):

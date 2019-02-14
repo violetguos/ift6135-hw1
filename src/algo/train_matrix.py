@@ -10,7 +10,7 @@ def train_matrix(nn, data, target, K, num_epoch, args, valid=None, test=None):
     batchSampler = BatchSampler(data, target, K)
     numBatch = data.shape[0] // K
 
-    save_freq = int(num_epoch/5)
+    save_freq = 1#int(num_epoch/5)
 
     # fixed name for each run for logging errors
     fname_prefix = file_name_gen('NN_model_h1_{}_h2_{}_{}'.format(nn.hiddenDim[0], nn.hiddenDim[1], args.init_method))
@@ -33,7 +33,7 @@ def train_matrix(nn, data, target, K, num_epoch, args, valid=None, test=None):
 
         if n == (num_epoch - 1) or n % save_freq == 0:
             print(':) saving')
-            fname = fname_prefix + '_epoch_{}.pkl'.format(n)
+            fname = fname_prefix + '_epoch_{}_rerun.pkl'.format(n+22)
             fp = os.path.join(args.save_directory, fname)
             nn.save_model(fp)
         if valid:

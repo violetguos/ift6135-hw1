@@ -42,14 +42,14 @@ def main(argv):
 
     for i in range(5):
         hyperparam_dict['hyperparam'].append(run(args))
-    with open("args2.json", "w") as data_file:
+    with open("args3.json", "w") as data_file:
         json.dump(hyperparam_dict, data_file, indent=4)
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
 
-    config = load_json("args2.json")
+    config = load_json("args3.json")
 
     for hyper_parameter_set in config["hyperparam"]:
         p = get_parameters(hyper_parameter_set)

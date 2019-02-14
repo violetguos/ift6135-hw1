@@ -28,7 +28,7 @@ def data_import():
     y_test = convertTarget(y_test)
     y_train = convertTarget(y_train)
 
-    return X_train[0:10], y_train[0:10],  X_test[0:10], y_test[0:10] # X_valid, y_valid,  X_test, y_test
+    return X_train, y_train,  X_test, y_test # X_valid, y_valid,  X_test, y_test
 
 
 def run(args):
@@ -40,9 +40,10 @@ def run(args):
 
     nn = NeuralNet(train_data.shape[1], (args.h1, args.h2), 10, train_data.shape[0],
                           init_mode=args.init_method, eta=args.learning_rate)
+    print(args.h1, args.h2)
     print("total number of param in plot_test", nn.calculParam())
 
-    #train_matrix(nn, train_data, train_target, args.batch_size, args.epochs, args, [valid_data, valid_target])
+    # train_matrix(nn, train_data, train_target, args.batch_size, args.epochs, args, [valid_data, valid_target])
 
 
 
@@ -51,7 +52,7 @@ def main(argv):
     # uncomment the following for training
 
 
-    # config = load_json("args2.json")
+    # config = load_json("args3.json")
     #
     # for hyper_parameter_set in config["hyperparam"]:
     #     # hidden units, and learning rates are generated randomly, and read from the json file
@@ -65,13 +66,13 @@ def main(argv):
     #
     #     args = parser.parse_args(argv)
     #     run(args)
-    
+
     plot_learning_curves('src/scripts/output/q1_dat_97/2019_02_12_23_09_17_NN_model_h1_1461_h2_398_glorot_97_dat1.txt')
 
 
 
 
 if __name__ == '__main__':
-    # just use a list or json for now instead of config argparser
-    # main(sys.argv[1:])
-    plot_learning_curves('src/scripts/output/q1_dat_97/2019_02_12_23_09_17_NN_model_h1_1461_h2_398_glorot_97_dat1.txt')
+    main(sys.argv[1:])
+    plot_learning_curves('src/script/output/q1_dat_97/2019_02_14_09_15_43_NN_model_h1_494_h2_503_glorot.txt')
+    # plot_learning_curves('output/q1_dat_97/2019_02_14_09_15_43_NN_model_h1_494_h2_503_glorot.txt')
